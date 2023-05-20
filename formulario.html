@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="formulario.css">
+    <title>Formulario</title>
+    <link rel="icon" href="/img/logo.png">
+</head>
+<body>
+    <h1>Formulario de registro</h1>
+    <p>Por favor, completa este formulario con la información requerida.</p>
+    <form id="registration-form" method="post" action=''>
+      <fieldset>
+        <label for="first-name">Ingresa tu nombre: <input id="first-name" name="first-name" type="text" required /></label>
+        <label for="last-name">Ingresa tu apellido: <input id="last-name" name="last-name" type="text" required /></label>
+        <label for="email">Ingresa tu E-mail: <input id="email" name="email" type="email" required /></label>
+        <label for="phone-number">Ingresa tu teléfono: <input id="phone-number" name="phone-number" type="text" required /></label>
+      </fieldset>
+      <fieldset>
+        <label for="personal-account"><input id="personal-account" type="radio" name="account-type" class="inline" /> Cuenta personal</label>
+        <label for="business-account"><input id="business-account" type="radio" name="account-type" class="inline" /> Cuenta empresas</label>
+        <label for="terms-and-conditions">
+          <input id="terms-and-conditions" type="checkbox" required name="terms-and-conditions" class="inline" />  Acepto <a href="https://www.freecodecamp.org/news/terms-of-service/">los terminos y condiciones </a>
+        </label>
+      </fieldset>
+      <fieldset>
+        <label for="profile-picture">Carga una imagen de tu empresa <input id="profile-picture" type="file" name="file" /></label>
+        <label for="age">Ingresa tu edad (años): <input id="age" type="number" name="age" min="13" max="120" /></label>
+        <label for="referrer">¿Cómo te enteraste de nosotros?
+          <select id="referrer" name="referrer">
+            <option value="">(seleccione una)</option>
+            <option value="1">Pagina web</option>
+            <option value="2">E-mail</option>
+            <option value="3">Voz a voz</option>
+            <option value="4">Otro</option>
+          </select>
+        </label>
+        <label for="bio">Proporciona una biografía de tu empresa
+          <textarea id="bio" name="bio" rows="3" cols="30" placeholder="Mi empresa se dedica......"></textarea>
+        </label>
+      </fieldset>
+      <input type="submit" value="Registrar" />
+    </form>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <script>
+      // Configurar tu proyecto de Firebase
+      const firebaseConfig = {
+        apiKey: "TU_API_KEY",
+        authDomain: "TU_DOMINIO.firebaseapp.com",
+        databaseURL: "https://TU_DOMINIO.firebaseio.com",
+        projectId: "TU_ID_DE_PROYECTO",
+        storageBucket: "TU_DOMINIO.appspot.com",
+        messagingSenderId: "TU_SENDER_ID",
+        appId: "TU_APP_ID"
+      };
+
+      // Inicializar Firebase
+      firebase.initializeApp(firebaseConfig);
+
+      const form = document.getElementById('registration-form');
+
+      form.addEventListener('submit', function(event) {
+        event.preventDefault(); // Evita que el formulario se envíe
+
+        const firstName = document.getElementById('first-name').value;
+        const lastName = document.getElementById('last-name').value;
+        const email = document.getElementById('email').value;
+        const phoneNumber = document.getElementById('phone-number').value;
+        const accountType = document.querySelector('input[name="account-type"]:checked').value;
+        const termsAndConditions = document.getElementById('terms-and-conditions').checked;
+        const profilePicture = document.getElementById('profile-picture').value;
+        const age = document.getElementById('age').value;
+        const referrer = document.getElementById('referrer').value;
+        const bio = document.getElementById('bio').value;
+
+        // Crear objeto JSON
+        const formData = {
+          firstName: firstName,
+          lastName: lastName,
+          email: email,
+          phoneNumber: phoneNumber,
+          accountType: accountType,
+          termsAndConditions: termsAndConditions,
+          profilePicture: profilePicture,
+          age: age,
+          referrer: referrer,
+          bio: bio
+        };
+
+        // Obtener una referencia a la base de datos de Firebase
+        const database = firebase.database();
+
+        // Guardar los datos en la base de datos de Firebase
+        database.ref('formulario').push(formData)
+          .then(function() {
+            console.log('Datos guardados en Firebase');
+          })
+          .catch(function(error) {
+            console.error('Error al guardar los datos:', error);
+          });
+      });
+    </script>
+</body>
+</html>
